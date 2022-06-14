@@ -1,5 +1,5 @@
-FROM hub.iflytek.com/netops/centos7:latest
-MAINTAINER IFLY NET
+FROM centos7:latest
+MAINTAINER DevNet
 # 切换国内阿里YUM源镜像
 RUN set -ex \
  && yum install -y wget \
