@@ -1,3 +1,0 @@
-HH3C-NQA-MIB::hh3cNqaResultsLostPacketRatio."13"."13" = Gauge32: 0 milliseconds
-HH3C-NQA-MIB::hh3cNqaResultsLostPacketRatio."14"."14" = Gauge32: 0 milliseconds
-HH3C-NQA-MIB::hh3cNqaResultsLostPacketRatio."16"."16" = Gauge32: 0 milliseconds

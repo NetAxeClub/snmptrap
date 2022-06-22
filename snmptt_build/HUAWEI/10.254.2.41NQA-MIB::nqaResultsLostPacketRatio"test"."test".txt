@@ -1,0 +1,1 @@
+NQA-MIB::nqaResultsLostPacketRatio = No Such Instance currently exists at this OID

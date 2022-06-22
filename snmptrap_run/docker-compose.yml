@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  mysql-server:
+    image: mysql:5.7
+    container_name: mysql-server
+    environment:
+      MYSQL_DATABASE: "snmptt"
+      MYSQL_USER: "snmptt"
+      MYSQL_PASSWORD: "mytrap"
+      MYSQL_ROOT_PASSWORD: "abcdefghigklmn"
+      TZ: Asia/Shanghai
+    command: ['--character-set-server=utf8', '--collation-server=utf8_bin',]
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
+    ports:
+      - 3306:3306
+    network_mode: "host"
+
+  snmptraps:
+    image: snmptraps:0.0.1
+    container_name: snmptraps
+    volumes:
+      - ./snmptraps:/var/log/snmptt
+      - ./snmptt.ini:/etc/snmp/snmptt.ini
+      - ./snmptt.conf.h3c_new_style:/etc/snmp/snmptt.conf.h3c_new_style
+      - ./snmptt.conf.h3c_public:/etc/snmp/snmptt.conf.h3c_public
+      - ./snmptt.conf.huawei:/etc/snmp/snmptt.conf.huawei
+      - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime
+    ports:
+      - 10162:162/udp
+    network_mode: "host"

@@ -1,0 +1,107 @@
+version: '3.2'
+services:
+  zookeeper:
+    image: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    restart: always
+
+  kafka1:
+    image: kafka
+    container_name: kafka1
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://当前服务器IP:9092
+      - KAFKA_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CREATE_TOPICS=snmptrap:3:2
+      - KAFKA_LOG_DIRS=/data/kafka-data
+      - KAFKA_LOG_RETENTION_HOURS=24
+      - KAFKA_DELETE_TOPIC_ENABLE:'true'
+    volumes:
+      - /data/kafka1/data:/data/kafka-data
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+
+  kafka2:
+    image: kafka
+    container_name: kafka2
+    ports:
+      - "9093:9093"
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://当前服务器IP:9093
+      - KAFKA_LISTENERS=PLAINTEXT://:9093
+      - KAFKA_BROKER_ID=2
+      - KAFKA_CREATE_TOPICS=snmptrap:3:2
+      - KAFKA_LOG_DIRS=/data/kafka-data
+      - KAFKA_LOG_RETENTION_HOURS=24
+      - KAFKA_DELETE_TOPIC_ENABLE:'true'
+    volumes:
+      - /data/kafka2/data:/data/kafka-data
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+
+  kafka3:
+    image: kafka
+    container_name: kafka3
+    ports:
+      - "9094:9094"
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://当前服务器IP:9094
+      - KAFKA_LISTENERS=PLAINTEXT://:9094
+      - KAFKA_BROKER_ID=3
+      - KAFKA_CREATE_TOPICS=snmptrap:3:2
+      - KAFKA_LOG_DIRS=/data/kafka-data
+      - KAFKA_LOG_RETENTION_HOURS=24
+      - KAFKA_DELETE_TOPIC_ENABLE:'true'
+    volumes:
+      - /data/kafka3/data:/data/kafka-data
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+
+  canal:
+    image: canal/canal-server:latest
+    container_name: canal
+    environment:
+      - canal.instance.master.address=10.254.23.100:3306
+      - canal.instance.dbUsername=root
+      - canal.instance.dbPassword=root_NetOps.2019
+      - canal.mq.topic=snmptrap
+      - canal.mq.partition=0
+      - canal.mq.partitionHash=snmptt.snmptt:id
+      - canal.serverMode=kafka
+      - canal.mq.servers=kafka1:9092,kafka2:9093,kafka:9094
+      - canal.mq.retries=0
+      # flagMessage模式下可以调大该值, 但不要超过MQ消息体大小上限
+      - canal.mq.batchSize=16384
+      - canal.mq.maxRequestSize = 1048576
+      # flatMessage模式下请将该值改大, 建议50-200
+      - canal.mq.lingerMs = 1
+      - canal.mq.bufferMemory = 33554432
+      # Canal的batch size, 默认50K, 由于kafka最大消息体限制请勿超过1M(900K以下)
+      - canal.mq.canalBatchSize = 50
+      # Canal get数据的超时时间, 单位: 毫秒, 空为不限超时
+      - canal.mq.canalGetTimeout = 100
+      # 是否为flat json格式对象
+      - canal.mq.flatMessage = false
+      - canal.mq.compressionType = none
+      - canal.mq.acks = all
+      # kafka消息投递是否使用事务
+      - canal.mq.transaction = false
+
+  cmak:
+    image: hlebalbau/kafka-manager:latest
+    container_name: cmak
+    restart: always
+    command:
+      - "-Dcmak.zkhosts=zookeeper:2181"
+      - "-DbasicAuthentication.enabled=true"
+      - "-DbasicAuthentication.username=admin"
+      - "-DbasicAuthentication.password=password"
+    ports:
+      - "9100:9000"

@@ -6,4 +6,10 @@
 5. 后期我们借助阿里开源的canal组件，并搭建kafka集群，通过cancal去同步mysql数据，并将同步到的数据存入kafka队列中
 6. 最后，大家只需要在各自的业务逻辑代码中，通过python 的kafka插件，去消费队列中的trap数据，即可实现消息订阅
 
-## 数据同步代码后面会逐步上传，请耐心等待
+## 使用方法
+
+1. snmptt_build 目录是用于构建一个snmptt的镜像，其中，里面的snmptt.ini需要根据实际场景填写mysql的连接参数
+2. 进入snmptt_build目录下，通过docker build -t snmptraps:0.0.1 .  用来构建docker镜像
+3. snmptrap_run 目录是用于将snmptt和mysql同步启动的compose配置文件。
+4. snmptt容器镜像构建完后，进入snmptrap_run，通过docker-compose up -d可以直接将snmptt和mysql服务启动。
+5. kafka_canal_run 目录是用于同步启动zookeeper、 kafka 三个实例组成的集群、canal数据同步任务同步启动，用于将mysql的数据实时同步进kafka消息队列

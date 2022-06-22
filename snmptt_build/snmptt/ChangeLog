@@ -1,0 +1,1148 @@
+Nov 27, 2021: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_1.5beta2 for release
+- Added reload support to the snmptt.service systemd file.  This will allow 
+  you to use the 'systemctl reload snmptt' command to re-load the configuration.
+- Updated documentation on securing SNMPTT to ensure the snmptt user has read
+  access to the configuration files.  This is required when issuing a reload.
+
+Oct 2nd, 2021: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed a bug that prevented the hostname from being extraced when IPv6 is 
+  disabled and the hostname is passed from Net-SNMP as
+  UDP: [x.x.x.x]:xxxx->[x.x.x.x]:xxxx.  Thanks to Danilo Godec for the fix.
+  (issue #3).
+- Fixed a bug with IPv6 address handling for NODES in snmptt.conf.
+- Added --preexec and --preexec_file options to snmpttconvertmib.  Feature
+  request from issue #4 by Andrew Shark.
+- Fixed debug output bug with snmptthandler-embedded.  Thanks to
+  kazuo ito for the fix.  PR #1.
+- Added PREEXEC support for unknown traps.  Results are stored in the
+  variable $pun.  See the unknown_trap_preexec setting in snmptt.ini.
+  Feature request from issue #3 by Andrew Shark.
+
+July 19th, 2021: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed a bug that prevented snmptt from starting when debug mode was disabled
+  (bug 48).
+
+April 11th, 2021: Alex Burger <alex_b@users.sourceforge.net>
+- Log skipped trap statistics only when unknown_trap_nodes_match_mode = 1.
+
+April 2nd, 2021: Alex Burger <alex_b@users.sourceforge.net>
+- Added unknown_trap_nodes_match_mode setting to allow you to change how
+  traps are handled when they do not match due to MATCH and NODES.  If set to 1,
+  traps are considered skipped instead of unknown.  Statistics now include the
+  number of skipped traps.  Thanks to Andrew Choo for the code.
+- Fixed a Perl warning issue with syslog logging.
+- Varbind types Gauge32 and Hex-STRING now have the 'Gauge32: ' and
+  'Hex-STRING: ' text removed for incoming traps in snmptthandler-embedded
+  along with unicode line endings (Perl 5.10 and higher).  Thanks to Andrew
+  Choo for the code.
+- Added remote syslog support using the Perl module Log::Syslog::Fast and
+  Log::Syslog::Constants.
+- Added log_format snmptt.ini setting to allow you to define the STDOUT, text
+  log and eventlog text format.
+- Added syslog_format snmptt.ini setting to allow you to define the syslog text
+  format.
+- Added variable substitution $j to pull out the enterprise number from the
+  full enterprise OID.  Example: For enterprise OID .1.3.6.1.4.1.232, $j would
+  contain 232.
+
+March 29th, 2021: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_1.5beta2
+- Add support for glob (wildcard) for snmptt.conf file list.  Thanks to
+  Andrew Choo for the code.
+
+March 25th, 2021: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_1.5beta1 for release
+
+March 21st, 2021: Alex Burger <alex_b@users.sourceforge.net>
+- Changed net_snmp_perl_best_guess default from 0 to 2 as any modern system
+  should support this.
+
+March 20th, 2021: Alex Burger <alex_b@users.sourceforge.net>
+- Added support for IPv6.  Feature must be enabled by setting ipv6enable = 1 in
+  snmptt.ini.
+- Changed Perl module for DNS support from Socket to IO::Socket::IP and from
+  functions aton/ntoa to getaddrinfo/getnameinfo to support IPv6.
+- Fixed a bug where DNS resolution was not working for enterprise variables
+  when net_snmp_perl_enable was disabled.
+
+March 13th, 2021: Alex Burger <alex_b@users.sourceforge.net>
+- Used PerlCritic to check all source files.
+- Changed open() calls from two arguments to three.
+- Replace Perl bare words with variables.
+- Enabled Perl warnings.
+
+March 11th, 2021: Alex Burger <alex_b@users.sourceforge.net>
+- Replaced Perl smartmatch as it's not considered experiemental.
+
+March 10th, 2021: Alex Burger <alex_b@users.sourceforge.net>
+- Fix bug in readtrap function where it was not properly removing quotes
+  around strings.  If string happened to only have a starting quote, or would
+  remove it and the last character of the string.
+- Fixed bug with debug mode that was causing some debug mode output even when
+  debug mode was off.
+
+March 05th, 2021: Alex Burger <alex_b@users.sourceforge.net>
+- Added --exec_file to snmpttconvertmib to allow you to provide an EXEC command
+  inside of a file instead of specifying on the command line.  Useful for
+  commands that include quotes so that you don't have to worry about escaping on
+  the command line.  Also allows you to define multiple EXEC lines instead of 
+  just one.
+- Added --exec_mode to snmpttconvertmib to allow you change how the EXEC line
+  is built.  Setting to 0 will append the format line to the end of the line
+  (default).  Setting to 1 does not append the format line to the end of the
+  line.  This is useful if you have added \$Fz to the --exec line so that
+  SNMPTT can replace it with the FORMAT line.  Setting to 2 is similar to 1,
+  but instead of SNMPTT having to replace \$Fz with the FORMAT line, 
+  snmpttconvertmib will do the substitution.
+
+February 28th, 2021: Alex Burger <alex_b@users.sourceforge.net>
+- snmptt.ini can now be located in /etc/snmptt and is searched for at this
+  location first.
+
+February 22nd, 2021: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed a bug with daemon_uid that prevented SNMPTT from starting on FreeBSD
+  (bug 47).  Thanks to Christian Ullrich for the fix.
+- Added support for sub-second sleep for spool folder processing when sleep is
+  set to less than 1.  Thanks to Tyler Leeds for the code.
+- Fixed a bug where traps arriving with the hostname set to UNKNOWN were
+  not being handled properly (bug 46).  Thanks to Tom Griep for the fix.
+
+July 23rd, 2020: Alex Burger <alex_b@users.sourceforge.net>
+- Removed the daemon_gid option and enhanced the daemon_uid option so that it
+  retreives the group membership for daemon_uid from the OS.  This fixes a bug
+  in 1.4.1 where it was not possible to define multiple group members with
+  daemon_gid.
+
+June 29th, 2020: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed a security issue with EXEC / PREXEC / unknown_trap_exec that could 
+  allow malicious shell code to be executed.  Thanks to Toshiyuki Goto for
+  reporting the issue.  Thanks to Toshiyuki Goto and Jon Nistor for testing.
+- Fixed a bug with EXEC / PREXEC / unknown_trap_exec that caused commands to
+  be run as root instead of the user defined in daemon_uid.
+- Added the snmptt.ini option daemon_gid to allow the gid to be set in 
+  addition to the uid.  Defaults to 'nobody' if not defined.
+
+July 5th, 2020: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed an issue with MATCH not matching integers properly (bug 41).
+- Fixed an issue where the agent IP address was not handled correctly when
+  it's received from Net-SNMP as IpAddress:x.x.x.x.  Bug 27.
+
+December 21st, 2016: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed a race condition bug with snmptthander and snmptthandler-embedded
+  which could cause traps to be missed.  Spool files are now immediately locked
+  after creation.  If flock() is not supported, the spool file will be created
+  with a temporary filename and then renamed after closing.  Spool files must
+  now start with # otherwise they are ignored.
+  Thanks to Andrew Darmody for reporting the issue and providing a solution.
+  Thanks to Kazuo Ito for an additional fix using flock.
+
+March 29th, 2015: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed a bug with wildcard_expansion_separator which caused an issue when
+  using wildcard separators that were longer than one character (bug 38).  Thanks
+  to Zalex_UA for the patch.
+- Changed version to snmptt1.5beta1
+
+November 6th, 2013: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_1.4 for release.
+
+March 18th, 2012: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed bug with unknown_trap_exec_format which resulted in duplicate text
+  when a custom format is used.  (Bug #37)
+
+Oct 22nd, 2012: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed bug with fix that was applied for bug 3567748 (syslog % escaping). 
+- Changed version to snmptt1.4beta2
+
+Oct 21th, 2012: Alex Burger <alex_b@users.sourceforge.net>
+- Release of snmptt1.4beta1
+
+Oct 21th, 2012: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed bug with snmptt hanging if the log message sent to syslog contained a 
+  % symbol.  All %'s are now escaped before sending to syslog (3567748). 
+  Thanks to Edward Greenspan.
+- Fixed bug with LOGONLY severity (3567744).  EXEC was being executed even if
+  the trap had a severity of LOGONLY.  
+- Fixed bug with not being able to write to the debug log file when running
+  snmptt as non-root if the debug file didn't already exist with the correct
+  permissions at startup.  The ownership of snmptt.debug is now set to
+  daemon_uid before switching to the new uid.  Patch 3423525.  Thanks to
+  Matvey Marinin.
+
+Oct 30th, 2011: Alex Burger <alex_b@users.sourceforge.net>
+- Installation documentation updates (bug 3425999). Thanks to Brian Excarnate.
+- Fixed bug with MATCH where number ranges were not working (3397982). Thanks to Maex.
+- Fixed bug with syslog logging.  Function was not being called properly (3166749).
+
+Oct 9th, 2010: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed bug where if the spool directory is not defined, files may be deleted
+  from the wrong folder (3020696).
+
+May 5th, 2010: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed possible bug with MySQL.  Put CONNECT string on one line.
+- Fixed bug where the hostname is not detected properly when snmptrapd
+  is configured to not use DNS.
+- Fixed bug with syslog (2980512).  Log entries were supposed to be logged with
+  snmptt[pid] but instad of the pid it was actually the effective user ID.
+  Thanks to Matteo P for the fix.
+- Fixed bug with multi-line traps (2915658).  Thanks to AndrewB for the fix.
+- Added snmptt.ini option net_snmp_perl_cache_enable to enable caching of
+  Net-SNMP Perl module OID and ENUM translations.  This may speed up
+  translations and reduce CPU load when net_snmp_perl_enable and translate_* 
+  options are enabled.
+
+April 23rd, 2010: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed bug with MATCH.  The PREEXEC $p variable could not be used with
+  MATCH.  PREEXEC is now executed first if MATCH contains $p.
+
+April 15th, 2010: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed bug with snmptthandler-embedded where IP addresses and OIDs were
+  not being detected properly because they contained 'OID:', 'IpAddress:'
+  etc.
+
+February 16th, 2010: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_1.4beta1
+- Added patch 2943209 from Ricardo Duarte for snmpttconvertmib to add new
+  format option 4 for trap name and variables similar to FORMAT $+*.
+
+November 15th, 2009: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_1.3 for release.
+
+June 25th, 2009: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_1.3beta2 for release.
+
+July 21th, 2009: Alex Burger <alex_b@users.sourceforge.net>July 18th, 2009: 
+- Fixed bug with snmptthandler-embedded.  It was using the wrong IP address
+  for hostname / ipaddress.
+
+July 18th, 2009: Alex Burger <alex_b@users.sourceforge.net>July 18th, 2009: 
+- Updated documentation for 1.3beta1 release
+
+July 18th, 2009: Alex Burger <alex_b@users.sourceforge.net>July 18th, 2009: 
+- Updated snmptthandler-embedded to support securityName and contextName.
+- Added variable substitutions Be, Bu, BE, Bn for SNMPv3 when using
+  snmptthandler-embedded.
+
+May 17th, 2009: Alex Burger <alex_b@users.sourceforge.net>
+- Added snmptthandler-embedded - a Net-SNMP embedded Perl version of
+  snmptthandler.
+- Added LSB init keywords and actions to snmptt-init.d and changed the
+  priority for start / stop so that it starts after snmptrapd and stops
+  before snmptrapd.  Thanks to Ville Skytta for the patch.
+- Changed the default log path to /var/log/snmptt for Unix and c:\snmpt\log
+  for Windows to make it easier to grant write permission to the snmptt
+  process.  Thanks to Ville Skytta for the patch.
+- Changed umask for log files to 002 to ensure they are not created as world
+  writable.  Thanks to Ville Skytta for the suggestion.
+- Fixed a bug where the the PID file was being created using the parent (root)
+  PID instead of the child (daemon_uid) when daemon_uid is used.
+- The DEBUG log file will now be re-opened when a HUP signal is sent.  Thanks 
+  to Ville Skytta for the suggestion.
+- When debugging is enabled, flush buffers every sleep cycle so we can tail
+  the debug log file.
+- Don't print messages to the console when starting in daemon mode unless
+  debugging is enabled or an error occurs.  Thanks to Ville Skytta for the 
+  suggestion.
+- 'Could not open debug output file!' is no longer reported when debugging
+  is disabled.  Thanks to Ville Skytta for the suggestion.
+- Added snmptt.logrotate file from Ville Skytta.
+
+January 15th, 2009: Alex Burger <alex_b@users.sourceforge.net>
+- Re-applied patch for bug 1748512.  Somehow it was added wrong and it
+  prevented trap lines that contained single line items inside of quotes
+  from working.
+
+August 4th, 2008: Alex Burger <alex_b@users.sourceforge.net>
+- Added duplicate_trap_window variable for duplicate trap detection.
+
+March 2nd, 2008: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed a bug where with handling escaped quotes in a trap message.
+  Bug 1748512.  Thanks to Erwin Abrahamse for the fix.
+
+October 12th, 2007: Alex Burger <alex_b@users.sourceforge.net>
+- Updated snmptt-net-snmp-test to test MIB descriptions.
+
+June 16th, 2007: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_1.3beta1
+- Fixed a bug where snmpttconvertmib would not recognize a MIB file if the
+  DEFINITIONS ::= BEGIN line was split across two lines.  Thanks to Alex 
+  Peeters for reporting the bug.  Bug 1678270.
+- Improved a previous bug fix for when a TRAP-TYPE / NOTIFICATION-TYPE line 
+  was split across two lines.  Fix did not allow the trap name to contain
+  a symbol such as a -.
+
+June 16th, 2007: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_1.2 for release.
+
+June 9th, 2007: Alex Burger <alex_b@users.sourceforge.net>
+- Change REGEX to use Text::Balanced instead of split to fix bug with
+  REGEX statements that contain captures.
+
+Apr 6th, 2007: Alex Burger <alex_b@users.sourceforge.net>
+- Release snmptt_1.2beta3
+
+Apr 6th, 2007: Alex Burger <alex_b@users.sourceforge.net>
+- Add workaround to Net-SNMP 5.4 bug 1638225 where the host name passed
+  in the traphandle is <UNKNOWN>.
+
+Mar 4th, 2007: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed bug where snmptt tried to log to syslog when 
+  changing UIDs even if syslog_system_enable was set to 0.
+  Thanks to Alex Peeters for reporting the bug.
+- The snmptt.pid file is now deleted when SNMPTT exits gracefully.
+- When running in daemon mode with a daemon_uid user defined, a
+  second (child) process will be started as the daemon_uid user so
+  there will be two snmptt processes running.
+  The first process will continue to run as the user that ran
+  snmptt (usually root), waiting for the child to quit.  After the
+  child quits, the parent process will remove the snmptt.pid file 
+  and exit.  The snmptt.pid file will contain the pid of the parent
+  process.  Sending a TERM signal to either process will cause
+  SNMPTT to terminate gracefully.
+  If you are not starting snmptt using root, then you should not
+  be defining daemon_uid.
+- Now aborts startup if an existing snmptt.pid file is found.
+- Verifies that it is able to write to the pid_file folder before
+  starting up.  If it can not, it aborts.  Only does this if
+  pid_file has been defined.  Otherwise it attempts to create the
+  pid file and if it fails, it just continues as in previous versions.
+
+Mar 3rd, 2007: Alex Burger <alex_b@users.sourceforge.net>
+- Added a text system log in addition to the existing syslog and Event 
+  Log logs.  Added log_system and log_system_file snmptt.ini options.  
+  Thanks to Alex Peeters for reporting the bug.
+- Added snmptt.ini option pid_file to allow for custom pid file locations
+  when running in daemon mode.  Thanks to Alex Peeters for the suggestion.
+- Fixed bug where pid file did not contain the current pid of snmptt.
+  Thanks to Alex Peeters for reporting the bug.  
+
+Feb 10th, 2007: Alex Burger <alex_b@users.sourceforge.net>
+- Added information to Nagios section of documentation for
+  using freshness checks to automatically clear trap alerts.
+- Added information to Nagios section of documentation for
+  using SNMP traps as heartbeats by using freshness checks.
+  Thanks to Martin Fuerstenau.  See bug 1629565.
+  
+Jan 27th, 2007: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed bug in threads support.  EXEC'd commands were all passed
+  the same $command variable.  Threads are now detached after
+  being created.
+- Changed version to snmptt_1.2beta3
+
+Dec 21st, 2006: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed bug in snmpttconvertmib where a --#SEVERITYMAP line
+  would be used instead of --#SEVERITY.
+
+Dec 18th, 2006: Alex Burger <alex_b@users.sourceforge.net>
+- Added unknown_trap_exec_format option
+
+Dec 7th, 2006: Alex Burger <alex_b@users.sourceforge.net>
+- Added exec_escape option
+- Changed version to snmptt_1.2beta2
+
+Nov 18th, 2006: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_1.2beta1
+
+Sept 23rd, 2006: Alex Burger <alex_b@users.sourceforge.net>
+- Added a simple check to see if the trap file being processed is a
+  valid file.  If it is not, the file is skipped and not deleted.
+
+Sept 15th, 2006: Alex Burger <alex_b@users.sourceforge.net>
+- Added snmptt.ini options date_format, time_format, date_time_format,
+  date_time_format_sql and stat_time_format_sql to allow the output format 
+  for $x and $X substitution variables, and the format of the date/time for
+  text logs and SQL to be changed using strftime() variables.  This allows 
+  for proper date/time data types to be used in SQL databases.
+
+June 18th, 2006: Alex Burger <alex_b@users.sourceforge.net>
+- Prevent logging to syslog and event log when running SNMPTT with
+  the --time option.  Thanks to Stefan Mohr.
+- Fixed a bug under Windows where SNMPTT was trying to log to syslog instead of
+  the event log.  Thanks to Roger Lindholm.
+- Add threads (ithreads) support for EXEC.  When enabled, EXEC commands will 
+  launch in a thread to allow SNMPTT to continue processing other traps.  
+  Added snmptt.ini options threads_enable and threads_max.
+
+May 13th, 2006: Alex Burger <alex_b@users.sourceforge.net>
+- Moved unknown_trap_exec to Exec section in snmptt.ini.  Patch
+  1476071.  Thanks to George Kourvoulis.
+
+Mar 23rd, 2006: Alex Burger <alex_b@users.sourceforge.net>
+- Added MATCH support for bitwise AND
+
+Mar 13th, 2006: Alex Burger <alex_b@users.sourceforge.net>
+- Fix a bug where snmpttconvertmib does not handle ARGUMENTS lines
+  that have $1, $2 etc instead of %0, %1.  Thanks to Todd A. Green.
+  Bug 1438394.
+
+Mar 12th, 2006: Alex Burger <alex_b@users.sourceforge.net>
+- Move all SQL update code to subroutines (mysql_update etc).
+- Added logging of trap statistics to SQL table.  Added *table_statistics
+  snmptt.ini variable to define the table to be used.
+- Added ability to add custom columns to *_table and *_table_unknown
+  tables.  Added sql_custom_columns and sql_custom_columns_unknown
+  snmptt.ini options.
+- Added variable substitution $H.  This variable will default to the 
+  host name of the computer that is running SNMPTT, unless the 
+  snmptt_system_name snmptt.ini option is defined.
+- Sys::Hostname is now required.
+
+Mar 4th, 2006: Alex Burger <alex_b@users.sourceforge.net>
+- Fix a bug where snmpttconvertmib would not translate a TRAP-TYPE / 
+  NOTIFICATION-TYPE line if it was split across two lines.  Thanks
+  to Todd A. Green.  Bug 1438794.
+
+Jan 20th, 2006: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_1.2beta
+- Fix bug in process trap for $match_temp 'remove any white space from before 
+  and after i modifier'
+- Added 'use strict' to snmptt
+- Added 'use strict' to snmpttconvertmib
+- Added 'use strict' to snmpttconvert
+- Added 'use strict' to snmptthandler and improved debugging
+
+Jan 17th, 2006: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_1.1
+
+Dec 31st, 2005: Alex Burger <alex_b@users.sourceforge.net>
+- Clean up white space formatting of code.
+
+Dec 10th, 2005: Alex Burger <alex_b@users.sourceforge.net>
+- Update version stamp in all files
+- Changed 'sub match' to only do variable substitution if needed.
+
+Nov 22nd, 2005: Alex Burger <alex_b@users.sourceforge.net>
+- MATCH statement now accepts any variable name instead of only
+  enterprise variables.  Example: MATCH $s:(Normal)
+
+Nov 5th, 2005: Alex Burger <alex_b@users.sourceforge.net>
+- Added NODES MODE= snmptt.conf file option to allow you to 
+  select either POS (positive - the default) or NEG (negative)
+  for NODES matches.  If set to NEG, then the NODES is a 'match'
+  only if NONE of the NODES entries match.  POS = x | x | x etc.
+  NEG = !x & !x & !x etc.
+- Fixed bug in NODES where NODES entries from previous EVENTs
+  were not being purged correctly.
+- Changed version to snmptt_1.1beta2
+
+Nov 5th, 2005: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_1.1beta1
+- Changed MySQL INSERT statements to PREPARE / EXECUTE as it is
+  safer than trying to escape all the fields manually.  This way
+  all escaping is done via the MySQL Perl module.
+
+Nov 2nd, 2005: Alex Burger <alex_b@users.sourceforge.net>
+- Added PREEXEC snmptt.conf file option to allow an external 
+  program to be run before processing the FORMAT and EXEC lines.
+  The output of the external program is stored in the $pn variable
+  where n is a number starting from 1.  Multiple PREEXEC lines
+  are permitted.  The first PREEXEC stores the result of the
+  command in $p1, the second in $p2 etc.  Any ending newlines
+  are removed.  The snmptt.ini parameter pre_exec_enable can be used
+  to enable / disable it.
+- If the debug log file can not be opened, a message is now logged
+  to syslog if syslog_system_enable is enabled, and to the 
+  Event Log if eventlog_system_enable is enabled.
+- Fixed a problem when --format_desc=n was used. It was adding a 
+  trailing whitespace for every non existent line in the description.
+  Thanks to Carlos Velasco for the fix.
+- Added unknown_trap_exec snmptt.ini option.  If defined, the 
+  command will be executed for ALL unknown traps.  Passed to the
+  command will be all standard and enterprise variables, similar 
+  to unknown_trap_log_file but without the newlines.  Thanks to
+  Carlos Velasco for the patch.
+- Modify output of hash dump to print Event: instead of hash:
+- Add dump of duplicate events for --dump option
+- Fixed bug with --dump trying to open up syslog, eventlog etc
+
+Oct 9th, 2005: Alex Burger <alex_b@users.sourceforge.net>
+- Changed PostgreSQL INSERT statements to PREPARE / EXECUTE to 
+  prevent issue with trap data being interpreted as placeholders
+  in the SQL statement which was causing logging errors.
+
+April 16th, 2005: Alex Burger <alex_b@users.sourceforge.net>
+- snmpttconvertmib was not printing 'Processing MIB xxx' if 
+  DEFINITIONS::= line didn't contain spaces (similar to 11/19/04).
+
+April 15th, 2005: Alex Burger <alex_b@users.sourceforge.net>
+- Added Windows Event Log forwarding documentation to integration section
+
+April 11th, 2005: Alex Burger <alex_b@users.sourceforge.net>
+- Fix bug in snmpttconvertmib:  --ARGUMENTS {} line was expected to have
+  one space between ARGUMENTS and {}.  It can now be any amount of white
+  space, or no space at all.
+
+November 19th, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- Allow for .* wildcard.  Only .x.* worked before.
+
+November 19th, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_1.0.1
+- Change snmpttconvertmib to allow for DEFINITIONS::= (no spaces)
+
+Aug 30th, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_1.0
+
+Aug 18th, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- Change PostreSQL and ODBC ping functions to not use errno like in MySQL.
+  Thanks to mike at mccartney.net.
+
+Aug 16th, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- Change version to 0.9.5
+- Add daemon sample traps
+- Fixed missing _unknown in unknown logging for PostgreSQL, ODBC
+  and Win32::ODBC.  Thanks to mike at mccartney.net 
+
+Aug 15th, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- Moved xx_ping_on_insert check before if (defined ($dbh..))
+
+Aug 10th, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- Added database ping support to PostgreSQL and DBD::ODBC.  Added debug
+  logging improvements for database connect and INSERT sections.  Thanks
+  to mike at mccartney.net.
+
+Debug output now prints out $n variable number beside 'Ent Value x' such as 
+  'Ent Value 2 ($3):' to reduce confusion when troubleshooting.
+
+Aug 9th, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- Debug output now prints out $n variable number beside 'Ent Value x' such as 
+  'Ent Value 2 ($3):' to reduce confusion when troubleshooting.
+
+July 14th, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- snmpttconvertmib:  Fix bug with infinite loop when processing VARIABLES
+  section if MIB file had spaces after }.  Thanks to mike at mccartney.net
+
+July 5th, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- Add SEC documentation
+- Update help for snmpttconvertmib
+
+June 25th, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- Changed mysql_ping_insert to mysql_ping_on_insert.
+- Added $Fz variable which outputs the processed FORMAT line for use in 
+  EXEC lines so if the FORMAT and EXEC lines contain the same thing (minus
+  the program to execute of course) the EXEC line can be simplified.
+- Removed mib_descriptions_enable and replaced with description_mode and
+  description_clean.  Can now use the description from either the 
+  SNMPTT.CONF or the MIB files.
+- Snmpttconvertmib:  Bug:  Was not parsing OBJECTS lines, only 
+  VARIABLES lines.
+
+June 24th, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- Removed references from sub substitute2.
+
+June 23th, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- Added config option mysql_ping_insert to enable / disable pinging the
+  database before an INSERT.
+- Changed ping_mysql subroutine to mysql_ping
+
+June 18th, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- MySQL:  Now does a ping before trying to do the INSERT even if
+  mysql_ping_interval is disabled.
+- Set default for mysql_ping_interval in snmptt to 500 match the .ini default.
+
+June 17th, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- Removed escape_sequences_enable option and replaced it with variable
+  substitutions $Fa, $Ff, $Fn, $Fr and $Ft.
+
+June 11th, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- Added mysql_ping_interval option to set how often the MySQL server
+  should be 'pinged'.  If the 'ping' fails, it will attempt to re-connect
+  to the database.
+- Added escape_sequences_enable option to enable the use of 
+  common escape sequences in FORMAT and EXEC lines.
+- Added variable substitution $D to dump the description text from 
+  the MIB file.  Enabled using the mib_descriptions_enable snmptt.ini
+  variable.  Thanks to Toshiyuki Haginaga.
+
+June 7th, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- Moved database connection code to create_db_connections function.
+  Function is now called AFTER changing users when running in 
+  daemon mode to prevent 'MySQL gone away' errors on some systems.
+  Thanks to Toshiyuki Haginaga.
+
+May 24th, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- Added 'Total traps ignored' to stats.
+
+May 14th, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- Added error number output for MySQL.
+
+May 13th, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- Add support for /usr/local/etc/snmp and /usr/local/etc.
+- Added help text for user when a Perl module is not found when loading
+  via 'require'.
+- Bug fix: debug log started time printed as serial instead of
+  regular date/time.
+
+April 4th, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- Add db_unknown_trap_format variable, update docs, faq
+- Statistics dumped at shutdown: 
+  Total traps received
+  Total traps translated
+  Total unknown traps
+- Statistics can be dumped every x seconds via statistics_interval 
+  variable or by creating a !statistics file in the spool directory.
+
+April 3rd, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- Add support for logging unknown traps to SQL table.
+  Added xxx_table_unknown variable for each SQL type.
+
+January 25th, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- Clean up yesterday's symbolic fix.  It now translates all
+  variable NAMES (if needed), the trap OID and the enterprise
+  VALUE.
+
+January 24th, 2004: Alex Burger <alex_b@users.sourceforge.net>
+- Traps received using symbolic format (snmptrapd without -On) 
+  were not being handled correctly.  Code in readtrap was looking
+  at wrong variable name.  Moved to function 
+  translate_symbolic_to_oid.  Called for trap OID variable value,
+  agent_address,  community and agent addrss variable names
+
+December 5th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_0.9.1
+- snmptt.conf file can now contain EXEC lines without FORMAT lines.
+
+November 3rd, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_0.9
+- snmptt-net-snmp-test now defaults to best_guess=2
+
+October 27th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Syslog messages now use snmptt[pid] instead of TRAPD (traps) and
+  snmptt-sys[pid] instead of SNMPTT (system messages)
+
+October 10th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Added daemon_uid support to change user snmptt runs as after
+  starting up
+
+October 9th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed bug with MATCH statement integer range.  1-5 would match
+  only 2-4 instead of 1-5.
+
+October 1st, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed bug with translate_value_oids_sub.  Was not detecting
+  IP addresses correctly (backtracing problem).  Function
+  resolve_value_ip_addresses_sub also changed.
+
+September 16th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_0.8.1
+
+September 16th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_0.8
+
+September 15th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Bug fix - sometimes Net-SNMP would pass a quoted line on multiple
+  lines.  They are now combined into one in snmptt.  Thanks to
+  Antïżœnio Cardoso.
+
+September 12th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Fix MATCH.  sub match_result was not returning a 0 (didn't really
+  matter).  If a match regex contained a space, it was removed...  Fixed
+- Add i modifier support for MATCH
+
+September 8th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Added snmptt.pid support
+
+September 7th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Snmpttconvertmib:  Problem from below must be a Net-SNMP bug.
+  MIBS environment variable now set to the filename of the MIB
+  instead of the MIB module name.
+- Snmpttconvertmib:  Checks for TRAP / NOTIF lines that have a --
+  in it.  Ignores them - comments..
+
+September 5th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Snmpttconvertmib now exits with exit 1 instead of die when
+  not enough parameters specified
+- Snmpttconvertmib: Some mib files contain multiple BEGIN/END 
+  statements and they were not being handled correctly.  Script
+  now looks for them throughout the file and sets the mib_name
+  variable correctly so lookups are correct with snmptranslate.
+  May be a bug in Net-SNMP:  If you set the MIBS environment
+  variable to anything except ALL or the first BEGIN value
+  in a file that contains multiple BEGIN/ENDs, then snmptranslate
+  does not work.  For now, MIBS environment is set to the first
+  occurance only.  If it turns out to be a bug in Net-SNMP, it
+  will be changed here to account for it.  Also added a --mibs=s
+  parameter to override the environment variable.
+- Snmpttconvertmib:  exec defaults to blank instead of qpage...
+- Clean up some warnings when running with perl -w
+
+September 4rd, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Finished fix for translate_value_oids_sub.  Both while loops now
+  have a break out to prevent an infinit loop, although it should
+  not occur..
+- When using e modifier with REGEX, force a new package to prevent
+  user from accessing internal snmptt variables, and prevent access
+  to the main:: package variables.
+- Added resolve_value_ip_addresses option, updated .ini files
+
+September 3rd, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Added support for i, g and e modifiers for REGEX
+- Fix translate_value_oids_sub.  If string contained multiple OIDs,
+  they may not be converted correctly.  Example, if you had
+  .1.2.3.4 and .1.2.3.4.5 it would translate to whatever and
+  whatever.5.  Improved with lookaheads and lookbehinds
+
+August 14th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Added support for DBD:Pg for PostgreSQL
+- Added postgresql_dbi_module and postgresql_dbi_hostport_enable 
+  options
+
+July 8th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Improve NODES handling of files to only load the NODES file
+  once when dynamic is off - uses a hash to store the entries
+  for each 'filename'
+
+July 7th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Allow multiple EXEC lines in config
+- Added dynamic_nodes config option
+- Allow multiple NODES lines in config
+
+July 2nd, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Added remote database support (host & port) for MySQL
+
+June 28th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Added remote database support (host & port) for PostreSQL
+
+June 24th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Snmpttconvertmib: Took out most of the net_snmp_perl code
+  and moved only the variables code into the main 
+  snmptranslate code as that's really the only difference,
+  and snmptranslate now works fast as the exact MIB name
+  is used on the command line.  Perl module only used to 
+  convert variable syntax, desc and enums.
+- Improved formatting of variables output
+- Allow comments on VARIABLES lines in MIB files
+
+June 21th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Snmpttconvertmib: Changed --net_snmp_perl method to use
+  the moduleID from the hash of OIDs instead of trying to 
+  load a specific MIB using setMib etc as some MIB files were
+  not converting.
+
+June 20th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Snmpttconvertmib: Changed snmptranslate method to use
+  modulename::trapname instead of enterprise.trapname as some
+  MIB files were not converting.
+
+June 19th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed $# - was giving one less than the actual number of enterprise
+  variables
+- Fixed MATCH statement to start at $1 instead of $0
+- Changed $n to $i to prevent confusion
+
+June 18th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Change help for snmpttconvertmib --exec= line
+
+June 11th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Changed ODBC & WinODBC code to not escape quotes.  Instead, double up
+  single quotes, and do not touch double quotes.
+
+May 27th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Added trapoid database column to contain the actual trap OID received from
+  Net-SNMP.  eventid will contain what was matched in the .conf file.
+
+May 9th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed bug when using wildcards.  The received trap was reset to the 
+  matching EVENT entry which contained the .*.  This caused things like
+  $S not to work.  Changed so that actual received trap is not overwritten
+  with what it matched to in the EVENT table.
+
+May 7th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- SNMPTT will strip DOS carriage return from snmptt.conf files if detected.
+
+April 29th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Snmpttconvertmib:  Printing of INTEGER enums was wrong.  Fixed.
+
+April 29th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Enterprise variables in snmpttunknown.log now start with Ent Value: instead
+  of just Value:
+
+April 25th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Snmpttconvertmib:  Now prints the variables contained in each
+  trap unless --no_variables is set.  When using --net_snmp_perl
+  it will also resolve the Syntax (INTEGER, OCTETSTR etc) and 
+  description.  If it's an INTEGER, will also print out the enums.  
+
+April 23rd, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Added my_getType and my_mapEnum functions.  Both attempt to use the
+  numeric OID first.  If that fails, then it converts the OID to a short
+  symbolic and uses that.  UCD-SNMP works with numeric, Net-SNMP 5.0.8 
+  does not.  Newer versions of Net-SNMP will work with numeric.  Numeric
+  is preferred as there is no chance of matching the wrong object.
+
+April 22st, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Add getType test to snmptt-net-snmp-test
+- If DNS is enabled, NODES entries are resolved to IP addresses before
+  comparing.  Will allow for aliases / CNAMES to match etc.
+- NODES match uses agent IP instead of host IP
+
+April 20th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- If agent IP address missing, copies IP from host IP address
+- If host name not resolved, resolves via DNS if enabled
+- If agent IP same as host IP, copies host DNS instead of resolving.
+- Added dns_enable option and changed (nearly) all $var[0] 
+  to $agent_dns_name
+
+April 19th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Added additional translation options
+
+April 18th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Cleaned up NODES / MATCH code
+- Changed version to snmptt_0.7.1
+
+April 17th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Added MATCH support for snmptt.conf
+- Changed version to snmptt_0.7
+- Added Net-SNMP Perl module version output to debug
+- Added snmptt-net-snmp-test program
+
+April 15th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Added ability to reload configuration files by adding a
+  file called '!reload' to the spool directory
+- Added support for symbolic OIDs from snmptrapd
+
+April 12th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Added support for translate_trap_oid
+- Added support for symbolic OIDs on EVENT line
+
+April 2nd, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Replace all back ticks with forward ticks on received trap
+- Prepend a backslash to ' and " characters when logging to SQL 
+  databases (community and format line)
+- Added REGEX support for snmptt.conf
+- Added translate_oids option
+- Snmpttconvertmib: Replace any spaces with -'s in severity
+
+April 1st, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Snmpttconvertmib: Add --severity and --no_severity switches
+- Snmpttconvertmib: Combines multiple --#SUMMARY lines into one
+- Snmpttconvertmib: Uses --#SEVERITY line
+- Checks for both INTEGER and Integer32 types when checking MIB entries
+  in SNMPTT.  Improve debugging output for this section also.
+
+March 31th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Snmpttconvertmib:  --exec command line option
+
+March 28th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Snmpttconvert, snmpttconvertmib:  Will strip DOS carriage return from
+  input files if detected.
+- Snmpttconvertmib:  Add new options to include both summary and
+  description lines in the FORMAT and EXEC lines.  Allows either or
+  both.  Also allows x number of sentences from the description to be
+  used on the FORMAT and EXEC lines.
+
+March 27th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- NODES can now contain CIDR address and network ranges.  The NODES line
+  can now contain a mix of host names, IP addresses / network ranges 
+  and filenames.
+- Added option to disable the default of $* in snmpttconvertmib
+  when there is no --#SUMMARY line, and the description does not
+  contain any variables
+
+March 26th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Translation of integers not working under Net-SNMP 5.0.8.  Fixed.  Reasons:
+
+  Problem #1: UCD-SNMP 4.2.3 allows getType and mapEnum to be passed
+  a numerical OID.  Net-SNMP 5.0.8 does not.
+  Because of this, we should make sure we use a textual OID instead when 
+  calling getType or mapEnum.  It's probably the correct way to do it anyways.	
+
+  Problem #2: UCD-SNMP 4.2.3 translateObject returns the textualOID followed
+  by .#, even if it is called with ,0 to use short names.  Net-SNMP 5.0.8
+  returns a short name some what correctly, but trails the textual name 
+  with a .
+
+- PostgreSQL support via DBD::PgPP
+- Changed version to snmptt_0.6.1
+
+March 25th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_0.6
+- Fixed bug in snmptt - domain name strip not working correctly
+- Re-fixed bug in snmpttconvertmib that would cause the last trap
+  (notification) converted from a v2 MIB file to contain an
+  incorrect DESCRIPTION and possibly FORMAT line when the last
+  thing in the MIB file is not the last trap definition
+  (broken when merging code below).  Applied only to Perl module
+  version.
+
+March 24th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Can now specify a NODES entry with snmpttconvertmib
+
+March 23rd, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Re-fixed bug in snmpttconvertmib that would cause the last trap
+  (notification) converted from a v2 MIB file to contain an
+  incorrect DESCRIPTION and possibly FORMAT line when the last
+  thing in the MIB file is not the last trap definition
+  (broken when merging code below)
+
+March 22nd, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Cleanup snmpttconvertmib code - combine V1 and V2 trap conversion
+  into one section
+- snmpttconvertmib now uses GetOpt::Long for arguments, using --in and
+  --out switches for in / out file, --version, --help, --debug.
+- Added support to snmpttconvertmib for the NET-SNMP Perl module.  Can
+  enable using --net_snmp_perl switch, or run as usual using snmptranslate.
+  Must also specify the mib file directory with --mibdir
+
+March 21th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Removed unused emerg ini setting, init $debugcmdline and 
+  $debugfilecmdline, remove unused $vartype variable, change a \1 to $1
+- Cleanup: Replaced many @xxx[] that should be $xxx[]
+
+March 18th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed bug with MySQL database not closing correctly at shutdown due to 
+  previous MySQL changes
+
+March 13th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed bug with handling trap data that contains spaces but is not inside of quotes
+  for traps received from snmptrapd 4.2.3
+- Fixed bug with translation of integers.  If the value could not be translated,
+  it should use the non-translated value
+- If a variable is passed from snmptrapd that is blank, snmptt will replace it with
+  (null)
+- snmpttconvertmib now checks the version of snmptranslate before converting
+  the mib.  To ensure OIDs are outputted as numerical, the -On switch is added 
+  to the snmptranslate command when snmptranslate is v5.0.2 or newer.
+  Net-SNMP 5.0.2 and newer (more specifically, snmplib/mib.c version 5.7 or newer 
+  in CVS) uses the -On switch to SET numeric OID output.  Anything before 5.0.2 
+  is used to TOGGLE the setting.  For older than v5.0.2, the snmp.conf file should
+  contain the line:  printNumericOids 1
+
+March 9th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Cleaned up wildcard expansion code.  Added wildcard_expansion_separator
+  variable
+- Remove trailing space after expanding wildcards
+
+March 7th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Improved syslog and event log support by allowing different syslog and
+  NT Event Log levels based on the severity level defined in the snmptt.conf
+  file
+- Added variable expansion for variable names using $vn, $+n, $-n, $+* and $-*
+- Fixed bug that would prevent variables numbered 10 or higher from being
+  translated correctly
+
+February 28th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Added more entries to snmptt-eventlog.mc (total of 30) and recompiled DLL
+
+February 27th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed error messages for SQL and NT event ID numbers.  Udpated docs
+
+February 25th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Updated keep_unlogged_traps option to have SNMPTT erase the spooled trap
+  file only after it successfully logs to at least one or all log systems. 
+  This will help prevent traps from being lost due to logging problems.
+
+February 24th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Added keep_unlogged_traps variable to prevent SNMPTT from deleting the
+  spooled trap file if NONE of defined logging systems successfully logged 
+  the trap
+- Added support for logging of traps using DBD::ODBC
+- Cleaned up MySQL code
+- Fixed bug with Win32::ODBC connection not being closed on exit of 
+  SNMPTT.
+
+February 22nd, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Added support for logging traps to the NT Event Log
+- Added syslog and NT Event Log support for SNMPTT 'system' events 
+  such as startup, shutdown, errors handling trap spool directory 
+  and files.  See readme for info on NT Event Log.
+- Added separate debug file for snmptthandler
+- Cleaned up defaults code for snmptthandler
+
+February 21st, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Added ability to translate integer values to enumeration tags defined
+  in MIB files.  Configure using snmptt.ini variables translate_integers
+  and mibs_environment.  Requires UCD / NET-SNMP Perl module (SNMP.pm)
+
+February 18th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed bug in snmpttconvertmib that would cause the last trap
+  (notification) converted from a v2 MIB file to contain an
+  incorrect DESCRIPTION and possibly FORMAT line when the last
+  thing in the MIB file is not the last trap definition
+- Values passed to snmptt that contained spaces but were not 
+  inside of quotes were being treated as multiple variables / 
+  values.  Replaced main readtrap code to fix this.
+
+February 15th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_0.5.1
+
+February 12th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_0.5
+- Changed fqdn_enable ini parameter to strip_domain.  Strip_domain
+  can now be 0, 1 or 2.  0 = do not strip domain name.  1 = strip
+  domain name.  2 = strip domain name based on list of domains contained
+  in strip_domain_list ini parameter.  Defaults to 0.  Note: With 
+  fqdn_enable, it defaulted to disable (strip domain).  If you were using
+  the CVS version with fqdn_enable set to 0, change strip_domain to 1.
+- Added strip_domain_list paramater to ini file
+
+January 23rd, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Spool file list sorted before processing to ensure traps are 
+  processed in the order they are received when in daemon mode.
+
+January 22nd, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Changed SNMPTTHANDLER to output the current date and time on the
+  first line of the spool file.
+- Changed SNMPTTHANDLER to v0.2
+- Added use_trap_time variable to config file for daemon mode to
+  have SNMPTT use either the time from the spool file, or the current
+  time.
+- Fixed code for default variable settings for .ini file.  Defaults
+  were not being set correctly if variable was not defined in .ini
+  file.
+
+January 20th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Cleaned up code for determining whether to run as a daemon or
+  standalone mode.
+- Fix bug with Nodes list not being flushed out when processing 
+  multiple traps at once.  Thanks to Christophe Belmont.
+
+January 6th, 2003: Alex Burger <alex_b@users.sourceforge.net>
+- Added fqdn_enable option to remove domain name from host name
+  passed to SNMPTT.  Defaults to stripping the domain name (0)
+
+December 3rd, 2002: Alex Burger <alex_b@users.sourceforge.net>
+- By default, snmpttconvertmib will now prepend the --TYPE line 
+  to the summary line followed by a ':'.  This can be disabled 
+  in the script in the OPTIONS section.  This should create a 
+  more descriptive FORMAT / EXEC line.  Example: 
+  "Status Trap: NIC switchover to slot $3"
+- Changed version to snmptt_0.4.1
+- Changed version to snmpttconvertmib_0.1.1
+
+November 18th, 2002: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_0.4
+
+November 13th, 2002: Alex Burger <alex_b@users.sourceforge.net>
+- Changed default Windows drive from d: to c: in ini file
+
+November 12th, 2002: Alex Burger <alex_b@users.sourceforge.net>
+- Added $c, $@, $O, $o, $ar, $R, $aR, $G, $S, $X, $N
+- Modified: $x
+- Modified: $S was name, now is Specific
+
+November 11th, 2002: Alex Burger <alex_b@users.sourceforge.net>
+- Updated snmptthandler to use .ini file 
+- Cleaned up variable names to be easier to read
+- Created snmptt.ini-nt file and tested under Windows NT
+
+November 10th, 2002: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed multiple_event bug - if it was disabled, would not process
+  traps
+- Now requires Config::IniFiles
+- Moved all config options to external ini file
+- Added -ini= command line parameter
+- Changed version to snmptt_0.3.3
+
+October 22th, 2002: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed bug with issuing a RELOAD (-HUP) when using a configuration
+  file that contains a list of other configuration files.  
+  Variable was not being cleared.
+
+October 18th, 2002: Alex Burger <alex_b@users.sourceforge.net>
+- Minor bug fix for MySQL / ODBC support - eventid wrong, use
+  INSERT INTO instead of just INSERT for ODBC to allow it to
+  work with MS Access
+
+October 17th, 2002: Alex Burger <alex_b@users.sourceforge.net>
+- Added support for MySQL (Linux / Windows) and ODBC (Windows)
+
+September 27th, 2002: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_0.3.1
+- Fixed bug with $x variable - code was searching for $r, not $x
+  to replace
+
+September 11th, 2002: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_0.3
+
+September 10th, 2002: Alex Burger <alex_b@users.sourceforge.net>
+- Bug fix - some variables were not being cleared causing data 
+  from previous traps being merged with newer traps when using
+  daemon mode.
+
+September 4th, 2002: Alex Burger <alex_b@users.sourceforge.net>
+- Added variable to allow user to disable forking for daemon mode.
+- Cleaned up file / directory error handling for daemon mode
+- Tested snmptt in deamon mode and snmptthandler on both Linux
+  and Windows NT
+
+September 3rd, 2002: Alex Burger <alex_b@users.sourceforge.net>
+- Added fork for daemon mode for non Win32 systems
+- Fixed minor Win32 file problems and tested deamon mode under 
+  Windows NT.  Snmptthandler not tested
+
+August 29th, 2002: Alex Burger <alex_b@users.sourceforge.net>
+- Fixed reload of configuration file to purge memory first
+- Cleaned up spool file error handling for daemon mode
+- Added HUP signal to daemon mode to force reload of configuration
+  file(s).  Thanks to Stefan Mohr.
+- You can now have multiple definitions of the same trap.  Giving
+  each entry a different NODES list will allow you to define
+  actions for a particular trap based on the node.
+  Thanks to Ingo Flaschberger.
+- NODES file / list now accepts both IP addresses and host 
+  names.  Thanks to Ingo Flaschberger.
+- Lines starting with # in NODES file treated as comment.
+  Thanks to Ingo Flaschberger.
+- Changed @var[3] references to $receivedtrap
+
+August 26th, 2002: Alex Burger <alex_b@users.sourceforge.net>
+- Added snmptthandler script which when run from snmptrapd.conf
+  instead of snmptt, will dump received traps (quickly) into
+  the directory defined by $spooldirectory to be later processed
+  by snmptt running as a daemon.
+- Added daemon mode support to snmptt.  snmptt --daemon or 
+  setting daemonmode=1 in script to enable.  Looks in 
+  $spooldirectory for files to process every $sleeptime seconds.
+
+August 21th, 2002: Alex Burger <alex_b@users.sourceforge.net>
+- Passed IP address sometimes in the format of
+  udp:ipaddress:port.  udp: and :port now removed.  Thanks to
+  Ingo Flaschberger.
+
+August 20th, 2002: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_0.2.2
+
+August 15th, 2002: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_0.2.1
+- Added command line options to snmptt: 
+    debug, debugfile, dump, help, version, time
+- Updated snmpttconvertmib to use also use enterprise when
+  running snmptranslate
+- Added updated readme.html (readme is text version of
+  readme.html which is updated when new versions are released)
+- Added sample-trap to CVS.  snmptt < sample-trap to use
+- Added support for NOTIFICATION-TYPE v2 MIB files to
+  snmpttconvertmib
+
+August 14th, 2002:  Alex Burger <alex_b@users.sourceforge.net> 
+- Add first version of SNMPTTCONVERTMIB
+
+July 15th, 2002:  Alex Burger <alex_b@users.sourceforge.net> 
+- Changed version to snmptt_0.2 for release
+
+June 15th, 2002: Alex Burger <alex_b@users.sourceforge.net>
+- Using UCD-SNMP v4.2.3, data passed from SNMPTRAPD was not
+  being handled correctly.  Data being passed only contained
+  one item per line instead of two.  This appears to be a
+  bug with v4.2.3 as it does not happen with v4.2.1 or 
+  v4.2.5.  SNMPTT can now work around it but v4.2.3 should NOT 
+  be used with SNMPTT especially if SNMP V2 traps are being 
+  used.
+- Fixed bug when receiving SNMP V2 traps.  SNMPTT was assuming
+  the last three variables were the agent IP, community name
+  and enterprise, which was incorrect.  It now looks for 
+  specific OIDs.  UCD-SNMP V4.2.3 should not be used due
+  to the bug mentioned above.
+
+June 13th, 2002: Alex Burger <alex_b@users.sourceforge.net>
+- Bug fix with $s - Severity.  Thanks to Hugues Mertens
+- Started this ChangeLog
+
+April 30th, 2002: Alex Burger <alex_b@users.sourceforge.net>
+- Changed version to snmptt_0.1.1
+- Improved debugging output
+
+April 18th, 2002: Alex Burger <alex_b@users.sourceforge.net>
+- Initial release of snmptt_0.1
+
+
